@@ -1,32 +1,40 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "MyPawn.h"
 
-// Sets default values
 AMyPawn::AMyPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Palka"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+
+	SetRootComponent(Mesh);
+	SpringArm->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(SpringArm);
 }
 
-// Called when the game starts or when spawned
 void AMyPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyController = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
 }
 
-// Called every frame
+
 void AMyPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (MyController->GetShouldMove())
+	{
+		SetActorLocation(GetActorLocation() + DeltaTime * Speed * GetActorForwardVector());
+	}
+
+	FRotator CurrentRotation = SpringArm->GetComponentRotation();
+	FRotator DeltaRotation(MyController->GetMouseY(), MyController->GetMouseX(), 0.0f);
+	SpringArm->SetWorldRotation(CurrentRotation + DeltaRotation * DeltaTime * Sensitivity);
 }
 
-// Called to bind functionality to input
 void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

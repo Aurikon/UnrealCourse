@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "MyPlayerController.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "MyPawn.generated.h"
 
 UCLASS()
@@ -13,10 +15,22 @@ class ACTORS_API AMyPawn : public APawn
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
+	float Speed = 100.0f;
+
+	UPROPERTY(EditAnywhere)
+	float Sensitivity = 10.0f;
+
+	UPROPERTY(EditAnywhere)
+	USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere)
+	AMyPlayerController* MyController;
 
 public:
 	// Sets default values for this pawn's properties
